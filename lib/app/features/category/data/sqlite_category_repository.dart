@@ -10,15 +10,15 @@ class SqliteCategoryRepository implements LocalCategoryRepository {
   static const kCategoryTableName = "categories";
   static const kTableCreateQuery = '''
 CREATE TABLE $kCategoryTableName(
-  categoryName TEXT NOT NULL UNIQUE,
-  imagePath TEXT
+  id INTEGER PRIMARY KEY NOT NULL,
+  categoryName TEXT NOT NULL,
+  imagePath TEXT,
+  type TEXT NOT NULL
 )
 ''';
 
   @override
-  Future<CategoryModel> addCategory(String categoryName) async {
-    final categoryModel = CategoryModel(categoryName: categoryName);
-
+  Future<CategoryModel> addCategory(CategoryModel categoryModel) async {
     await _db.insert(
       kCategoryTableName,
       categoryModel.toMap(),
@@ -28,11 +28,11 @@ CREATE TABLE $kCategoryTableName(
   }
 
   @override
-  Future<void> deleteCategory(String categoryName) async {
-    await _db.delete(
+  Future<void> deleteCategory(CategoryModel categoryModel) {
+    return _db.delete(
       kCategoryTableName,
-      where: "categoryName = ?",
-      whereArgs: [categoryName],
+      where: "id = ?",
+      whereArgs: [categoryModel.id],
     );
   }
 

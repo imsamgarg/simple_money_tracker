@@ -1,15 +1,18 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:simple_money_tracker/app/features/category/data/sqlite_category_repository.dart';
 import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
+import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-Future<void> _cleanUp(Database db) async => db.delete(_table);
-
-const _table = SqliteCategoryRepository.kCategoryTableName;
+CategoryModel _createModel(String name) {
+  return CategoryModel(categoryName: name, type: TransactionType.expense);
+}
 
 void main() {
+  const table = SqliteCategoryRepository.kCategoryTableName;
+  Future<void> _cleanUp(Database db) async => db.delete(table);
+
   late final Database db;
   late final SqliteCategoryRepository repo;
 
@@ -23,9 +26,9 @@ void main() {
 
   group('sqlite category repository test group', () {
     test("add categories", () async {
-      await repo.addCategory("food");
+      await repo.addCategory(_createModel("food"));
 
-      var data = await db.query(_table);
+      var data = await db.query(table);
       expect(data.length, 1);
 
       final model = CategoryModel.fromMap(data[0]);
@@ -35,42 +38,50 @@ void main() {
 
       await _cleanUp(db);
       for (var i = 0; i < 5; i++) {
-        await repo.addCategory("food$i");
+        await repo.addCategory(_createModel("namfood$i"));
       }
 
-      data = await db.query(_table);
+      data = await db.query(table);
       expect(data.length, 5);
 
       ///Throws Exception on duplicate category name
-      expect(
-        () => repo.addCategory("food1"),
-        throwsA(isA<DatabaseException>()),
-      );
+      // expect(
+      // () =>
+
+      ///Should not throw exception on duplicate values
+      repo.addCategory(_createModel("food1"));
+
+      // throwsA(isA<DatabaseException>()),
+      // );
     });
 
     test('delete categories', () async {
-      await repo.addCategory("food");
+      await repo.addCategory(_createModel("food"));
 
-      var data = await db.query(_table);
+      var data = await db.query(table);
       expect(data.length, 1);
 
-      await repo.deleteCategory("food");
-      data = await db.query(_table);
+      await repo.deleteCategory(CategoryModel.fromMap(data[0]));
+      data = await db.query(table);
       expect(data.length, 0);
 
       for (var i = 0; i < 5; i++) {
-        await repo.addCategory("food$i");
+        await repo.addCategory(_createModel("food$i"));
       }
-      data = await db.query(_table);
+      data = await db.query(table);
       expect(data.length, 5);
+      var models = data.map((e) => CategoryModel.fromMap(e)).toList();
 
-      await repo.deleteCategory("food1");
-      await repo.deleteCategory("food2");
+      await repo
+          .deleteCategory(models.firstWhere((e) => e.categoryName == "food1"));
+      await repo
+          .deleteCategory(models.firstWhere((e) => e.categoryName == "food2"));
+      // await repo.deleteCategory(_createModel("food2"));
 
-      data = await db.query(_table);
+      data = await db.query(table);
       expect(data.length, 3);
 
-      final models = data.map((e) => CategoryModel.fromMap(e)).toList();
+      models = data.map((e) => CategoryModel.fromMap(e)).toList();
 
       expect(models.where((e) => e.categoryName == "food1").length, 0);
       expect(models.where((e) => e.categoryName == "food2").length, 0);
@@ -79,8 +90,8 @@ void main() {
       final models = <CategoryModel>[];
 
       for (var i = 0; i < 5; i++) {
-        models.add(CategoryModel(categoryName: "food$i"));
-        await repo.addCategory(models[i].categoryName);
+        models.add(_createModel("food$i"));
+        await repo.addCategory(_createModel("food$i"));
       }
 
       final newModels = await repo.getUserCreatedCategories();
@@ -90,7 +101,12 @@ void main() {
       models.sort((a, b) => a.categoryName.compareTo(b.categoryName));
 
       expect(newModels.length, 5);
-      expect(listEquals(models, newModels), true);
+      for (final e in newModels) {
+        expect(
+          models.where((el) => e.categoryName == el.categoryName).length,
+          1,
+        );
+      }
     });
   });
 
