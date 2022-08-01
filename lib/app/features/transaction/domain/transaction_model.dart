@@ -17,7 +17,7 @@ class TransactionModel {
     required this.time,
     required this.id,
     this.notes,
-    required this.description,
+    this.description,
     required this.category,
   });
 
@@ -45,7 +45,7 @@ class TransactionModel {
     return <String, dynamic>{
       'transactionType': transactionType.value,
       'amount': amount,
-      'time': time.millisecondsSinceEpoch,
+      'time': time.toUtc().millisecondsSinceEpoch,
       'id': id,
       'notes': notes,
       'description': description,
@@ -58,7 +58,7 @@ class TransactionModel {
       transactionType:
           TransactionType.fromString(map['transactionType'] as String),
       amount: map['amount'] as double,
-      time: DateTime.fromMillisecondsSinceEpoch(map['time'] as int),
+      time: DateTime.fromMillisecondsSinceEpoch(map['time'] as int).toLocal(),
       id: map['id'] as String,
       notes: map['notes'] != null ? map['notes'] as String : null,
       description:
