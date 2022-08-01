@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 
 class TransactionModel {
@@ -8,8 +9,8 @@ class TransactionModel {
   final DateTime time;
   final String id;
   final String? notes;
-  final String description;
-  final String categoryName;
+  final String? description;
+  final CategoryModel category;
   TransactionModel({
     required this.transactionType,
     required this.amount,
@@ -17,7 +18,7 @@ class TransactionModel {
     required this.id,
     this.notes,
     required this.description,
-    required this.categoryName,
+    required this.category,
   });
 
   TransactionModel copyWith({
@@ -27,7 +28,7 @@ class TransactionModel {
     String? id,
     String? notes,
     String? description,
-    String? categoryName,
+    CategoryModel? category,
   }) {
     return TransactionModel(
       transactionType: transactionType ?? this.transactionType,
@@ -36,7 +37,7 @@ class TransactionModel {
       id: id ?? this.id,
       notes: notes ?? this.notes,
       description: description ?? this.description,
-      categoryName: categoryName ?? this.categoryName,
+      category: category ?? this.category,
     );
   }
 
@@ -48,25 +49,27 @@ class TransactionModel {
       'id': id,
       'notes': notes,
       'description': description,
-      'categoryName': categoryName,
+      'category': category.toMap(),
     };
   }
 
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
     return TransactionModel(
-      transactionType: _getTransactionType(map['transactionType'] as String),
+      transactionType:
+          TransactionType.fromString(map['transactionType'] as String),
       amount: map['amount'] as double,
       time: DateTime.fromMillisecondsSinceEpoch(map['time'] as int),
       id: map['id'] as String,
       notes: map['notes'] != null ? map['notes'] as String : null,
-      description: map['description'] as String,
-      categoryName: map['categoryName'] as String,
+      description:
+          map['description'] != null ? map['description'] as String : null,
+      category: CategoryModel.fromMap(map['category'] as Map<String, dynamic>),
     );
   }
 
   @override
   String toString() {
-    return 'TransactionModel(transactionType: $transactionType, amount: $amount, time: $time, id: $id, notes: $notes, description: $description, categoryName: $categoryName)';
+    return 'TransactionModel(transactionType: $transactionType, amount: $amount, time: $time, id: $id, notes: $notes, description: $description, category: $category)';
   }
 
   @override
@@ -79,7 +82,7 @@ class TransactionModel {
         other.id == id &&
         other.notes == notes &&
         other.description == description &&
-        other.categoryName == categoryName;
+        other.category == category;
   }
 
   @override
@@ -90,11 +93,6 @@ class TransactionModel {
         id.hashCode ^
         notes.hashCode ^
         description.hashCode ^
-        categoryName.hashCode;
-  }
-
-  static TransactionType _getTransactionType(String map) {
-    if (map == TransactionType.expense.value) return TransactionType.expense;
-    return TransactionType.income;
+        category.hashCode;
   }
 }
