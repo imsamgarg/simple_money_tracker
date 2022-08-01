@@ -8,7 +8,7 @@ class SqliteTransactionRepository extends LocalTransactionRepository {
   final Database _db;
 
   SqliteTransactionRepository(this._db);
-  static const kTableName = "trasactions";
+  static const kTableName = "transactions";
   static const kTableCreateQuery = '''
 CREATE TABLE $kTableName(
   id TEXT PRIMARY KEY NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE $kTableName(
 
   @override
   Future<void> addTransaction(TransactionModel transactionModel) {
-    final data = transactionModel.toMap()..remove('categoryId');
+    final data = transactionModel.toMap()..remove('category');
     data.putIfAbsent("categoryId", () => transactionModel.category.id);
     data.putIfAbsent(
       "categoryName",
@@ -51,7 +51,7 @@ CREATE TABLE $kTableName(
     final maps = await _db.query(
       kTableName,
       where: "transactionType = ?",
-      whereArgs: [type],
+      whereArgs: [type.value],
     );
 
     return maps.map(_transactionModelConverter).toList();
@@ -61,9 +61,12 @@ CREATE TABLE $kTableName(
     final category = {
       "categoryName": data['categoryName'],
       "type": data['transactionType'],
+      "id": data["categoryId"]
     };
-    data.putIfAbsent("category", () => category);
-    return TransactionModel.fromMap(data);
+
+    final newData = {...category, ...data};
+    newData.putIfAbsent("category", () => category);
+    return TransactionModel.fromMap(newData);
   }
 
   @override
