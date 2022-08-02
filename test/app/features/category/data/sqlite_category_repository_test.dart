@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:simple_money_tracker/app/features/category/data/sqlite_category_repository.dart';
 import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
@@ -5,8 +7,12 @@ import 'package:simple_money_tracker/app/features/transaction/domain/transaction
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-CategoryModel _createModel(String name) {
-  return CategoryModel(categoryName: name, type: TransactionType.expense);
+CategoryModel createTempCategoryModel(String name) {
+  return CategoryModel(
+    id: Random().nextInt(99999),
+    categoryName: name,
+    type: TransactionType.expense,
+  );
 }
 
 void main() {
@@ -26,7 +32,8 @@ void main() {
 
   group('sqlite category repository test group', () {
     test("add categories", () async {
-      await repo.addCategory(_createModel("food"));
+      final addedModel = createTempCategoryModel("food");
+      await repo.addCategory(addedModel);
 
       var data = await db.query(table);
       expect(data.length, 1);
@@ -35,10 +42,11 @@ void main() {
 
       expect(model.categoryName, "food");
       expect(model.imagePath, null);
+      expect(model, addedModel);
 
       await _cleanUp(db);
       for (var i = 0; i < 5; i++) {
-        await repo.addCategory(_createModel("namfood$i"));
+        await repo.addCategory(createTempCategoryModel("namfood$i"));
       }
 
       data = await db.query(table);
@@ -49,14 +57,14 @@ void main() {
       // () =>
 
       ///Should not throw exception on duplicate values
-      repo.addCategory(_createModel("food1"));
+      repo.addCategory(createTempCategoryModel("food1"));
 
       // throwsA(isA<DatabaseException>()),
       // );
     });
 
     test('delete categories', () async {
-      await repo.addCategory(_createModel("food"));
+      await repo.addCategory(createTempCategoryModel("food"));
 
       var data = await db.query(table);
       expect(data.length, 1);
@@ -66,7 +74,7 @@ void main() {
       expect(data.length, 0);
 
       for (var i = 0; i < 5; i++) {
-        await repo.addCategory(_createModel("food$i"));
+        await repo.addCategory(createTempCategoryModel("food$i"));
       }
       data = await db.query(table);
       expect(data.length, 5);
@@ -90,8 +98,8 @@ void main() {
       final models = <CategoryModel>[];
 
       for (var i = 0; i < 5; i++) {
-        models.add(_createModel("food$i"));
-        await repo.addCategory(_createModel("food$i"));
+        models.add(createTempCategoryModel("food$i"));
+        await repo.addCategory(createTempCategoryModel("food$i"));
       }
 
       final newModels = await repo.getUserCreatedCategories();

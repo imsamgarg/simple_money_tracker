@@ -9,7 +9,7 @@ import 'package:simple_money_tracker/app/features/transaction/domain/transaction
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-TransactionModel _createModel([TransactionType? type]) {
+TransactionModel createTempTransactionModel([TransactionType? type]) {
   return TransactionModel(
     transactionType: type ?? TransactionType.expense,
     amount: Random().nextDouble() * 99,
@@ -40,7 +40,7 @@ void main() {
 
   group('sqlite transaction repo test group ', () {
     test('add transaction', () async {
-      final model = _createModel();
+      final model = createTempTransactionModel();
       await repo.addTransaction(model);
 
       final newModels = await repo.getAllTransactions();
@@ -48,7 +48,7 @@ void main() {
       expect(newModels[0], model);
       const counter = 5;
       for (var i = 0; i < counter; i++) {
-        await repo.addTransaction(_createModel());
+        await repo.addTransaction(createTempTransactionModel());
       }
 
       final models = await repo.getAllTransactions();
@@ -61,7 +61,7 @@ void main() {
       );
     });
     test('delete transaction', () async {
-      final model = _createModel();
+      final model = createTempTransactionModel();
 
       await repo.addTransaction(model);
       var dbModels = await repo.getAllTransactions();
@@ -74,7 +74,7 @@ void main() {
       expect(dbModels.length, 0);
 
       const count = 5;
-      final models = List.generate(count, (_) => _createModel());
+      final models = List.generate(count, (_) => createTempTransactionModel());
 
       for (final model in models) {
         await repo.addTransaction(model);
@@ -96,7 +96,7 @@ void main() {
       const count = 5;
 
       ///default to expenses
-      final models = List.generate(count, (_) => _createModel());
+      final models = List.generate(count, (_) => createTempTransactionModel());
 
       for (final model in models) {
         await repo.addTransaction(model);
@@ -112,8 +112,8 @@ void main() {
       dbModels = await repo.getAllIncomes();
       expect(dbModels.length, 0);
 
-      final incomes =
-          List.generate(count, (_) => _createModel(TransactionType.income));
+      final incomes = List.generate(
+          count, (_) => createTempTransactionModel(TransactionType.income));
       for (final income in incomes) {
         await repo.addTransaction(income);
       }
