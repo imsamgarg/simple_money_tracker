@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_model.dart';
 
 abstract class LocalTransactionRepository {
@@ -16,3 +17,7 @@ abstract class LocalTransactionRepository {
   /// Get All Incomes
   Future<List<TransactionModel>> getAllIncomes();
 }
+
+final localTransactionProvider = Provider<LocalTransactionRepository>((_) {
+  throw UnimplementedError();
+});

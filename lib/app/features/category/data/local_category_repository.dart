@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
 
 abstract class LocalCategoryRepository {
@@ -10,3 +11,7 @@ abstract class LocalCategoryRepository {
   ///Get all the user created categories
   Future<List<CategoryModel>> getUserCreatedCategories();
 }
+
+final localCategoryProvider = Provider<LocalCategoryRepository>((_) {
+  throw UnimplementedError();
+});
