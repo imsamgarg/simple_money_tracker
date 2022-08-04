@@ -113,7 +113,10 @@ void main() {
       expect(dbModels.length, 0);
 
       final incomes = List.generate(
-          count, (_) => createTempTransactionModel(TransactionType.income));
+        count,
+        (_) => createTempTransactionModel(TransactionType.income),
+      );
+
       for (final income in incomes) {
         await repo.addTransaction(income);
       }
