@@ -4,12 +4,12 @@ import 'package:simple_money_tracker/app/app.dart';
 import 'package:simple_money_tracker/app/core/constants/strings.dart';
 import 'package:simple_money_tracker/app/features/category/data/local_category_repository.dart';
 import 'package:simple_money_tracker/app/features/category/data/sqlite_category_repository.dart';
-import 'package:simple_money_tracker/app/features/startup/data/sqlite_startup_repository.dart';
+import 'package:simple_money_tracker/app/features/startup/data/sqlite_database_repository.dart';
 import 'package:simple_money_tracker/app/features/transaction/data/local_transaction_repository.dart';
 import 'package:simple_money_tracker/app/features/transaction/data/sqlite_transaction_repository.dart';
 
 void main() async {
-  const sqliteRepo = SqliteStartupRepository(
+  final sqliteRepo = SqliteDatabaseRepository(
     kDbName,
     //For creating tables on first start
     queriesOnDatabaseCreation: [
@@ -26,6 +26,7 @@ void main() async {
 
   final container = ProviderContainer(
     overrides: [
+      sqliteDatabaseProvider.overrideWithValue(sqliteRepo),
       localCategoryProvider.overrideWithValue(localCategoryRepository),
       localTransactionProvider.overrideWithValue(localTransactionRepository),
     ],
