@@ -5,7 +5,8 @@ import 'package:simple_money_tracker/app/features/transaction/domain/transaction
 import 'package:sqflite/sqflite.dart';
 
 class SqliteTransactionRepository extends LocalTransactionRepository {
-  final Database _db;
+  /// *Uses [DatabaseExecutor] so that same class can be used for sqlite transaction
+  final DatabaseExecutor _db;
 
   SqliteTransactionRepository(this._db);
   static const kTableName = "transactions";

@@ -3,7 +3,8 @@ import 'package:simple_money_tracker/app/features/category/domain/category_model
 import 'package:sqflite/sqflite.dart';
 
 class SqliteCategoryRepository implements LocalCategoryRepository {
-  final Database _db;
+  /// *Uses [DatabaseExecutor] so that same class can be used for sqlite transaction
+  final DatabaseExecutor _db;
 
   SqliteCategoryRepository(this._db);
 
