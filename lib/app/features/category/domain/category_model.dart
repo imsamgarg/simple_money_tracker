@@ -7,7 +7,7 @@ class CategoryModel {
   final String categoryName;
   final String? imagePath;
   final TransactionType type;
-  CategoryModel({
+  const CategoryModel({
     this.id,
     required this.categoryName,
     this.imagePath,

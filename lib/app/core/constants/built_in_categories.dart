@@ -2,5 +2,9 @@ import 'package:simple_money_tracker/app/features/category/domain/category_model
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 
 final builtInCategories = <CategoryModel>[
-  const CategoryModel(categoryName: "Food", type: TransactionType.expense),
+  const CategoryModel(
+    id: 1,
+    categoryName: "Food",
+    type: TransactionType.expense,
+  ),
 ];

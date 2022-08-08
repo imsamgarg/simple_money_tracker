@@ -21,6 +21,6 @@ class AddCategoryController extends StateNotifier<AsyncValue<void>> {
 final addCategoryController =
     StateNotifierProvider.autoDispose<AddCategoryController, AsyncValue<void>>(
         (ref) {
-  final categoryService = ref.watch(categoryServiceProvider);
+  final categoryService = ref.watch(categoryServiceProvider.notifier);
   return AddCategoryController(categoryService);
 });
