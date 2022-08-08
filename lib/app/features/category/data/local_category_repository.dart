@@ -9,7 +9,7 @@ abstract class LocalCategoryRepository {
   Future<CategoryModel> addCategory(CategoryModel categoryModel);
 
   ///Get all the user created categories
-  Future<List<CategoryModel>> getUserCreatedCategories();
+  Future<List<CategoryModel>> getCategories();
 }
 
 final localCategoryProvider = Provider<LocalCategoryRepository>((_) {

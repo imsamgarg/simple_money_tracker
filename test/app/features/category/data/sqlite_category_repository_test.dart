@@ -102,7 +102,7 @@ void main() {
         await repo.addCategory(createTempCategoryModel("food$i"));
       }
 
-      final newModels = await repo.getUserCreatedCategories();
+      final newModels = await repo.getCategories();
 
       ///Might be not in order thats why i have sorted it
       newModels.sort((a, b) => a.categoryName.compareTo(b.categoryName));

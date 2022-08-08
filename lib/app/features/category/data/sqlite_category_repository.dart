@@ -18,14 +18,48 @@ CREATE TABLE $kCategoryTableName(
 )
 ''';
 
+  static const _kCategoryInsertQuery = '''
+INSERT INTO $kCategoryTableName(id,categoryName,imagePath,type)
+ ''';
   @override
   Future<CategoryModel> addCategory(CategoryModel categoryModel) async {
-    await _db.insert(
+    final id = await _db.insert(
       kCategoryTableName,
       categoryModel.toMap(),
     );
 
-    return categoryModel;
+    return categoryModel.copyWith(id: id);
+  }
+
+  ///TODO: can be implemented but not needed
+  // Future<void> addAllCategories(List<CategoryModel> categoryModels) async {}
+
+  ///*Used for storing categories at first start time
+  ///
+  ///Didn't used simple insert as it would create some overhead.
+  static String createMultipleInsertQuery(List<CategoryModel> categoryModels) {
+    final buffer = StringBuffer(_kCategoryInsertQuery);
+
+    buffer.write("VALUES");
+    for (int i = 0; i < categoryModels.length; i++) {
+      final model = categoryModels[i];
+
+      buffer
+        ..write("(")
+        ..write(model.id)
+        ..write(",")
+        ..write(model.categoryName)
+        ..write(",")
+        ..write(model.imagePath)
+        ..write(",")
+        ..write(model.type.value)
+        ..write(")");
+
+      if (i != categoryModels.length - 1) buffer.writeln(",");
+    }
+
+    buffer.writeln(";");
+    return buffer.toString();
   }
 
   @override
@@ -38,7 +72,7 @@ CREATE TABLE $kCategoryTableName(
   }
 
   @override
-  Future<List<CategoryModel>> getUserCreatedCategories() async {
+  Future<List<CategoryModel>> getCategories() async {
     final maps = await _db.query(kCategoryTableName);
     return maps.map((e) => CategoryModel.fromMap(e)).toList();
   }

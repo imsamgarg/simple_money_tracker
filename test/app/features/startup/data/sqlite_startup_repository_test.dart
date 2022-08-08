@@ -37,7 +37,7 @@ void main() {
       final catRepo = SqliteCategoryRepository(db);
       final transactionRepo = SqliteTransactionRepository(db);
 
-      var categories = await catRepo.getUserCreatedCategories();
+      var categories = await catRepo.getCategories();
       var transactions = await transactionRepo.getAllTransactions();
 
       ///Because table is empty
@@ -50,7 +50,7 @@ void main() {
       final transactionModel = createTempTransactionModel();
       await transactionRepo.addTransaction(transactionModel);
 
-      categories = await catRepo.getUserCreatedCategories();
+      categories = await catRepo.getCategories();
       transactions = await transactionRepo.getAllTransactions();
 
       expect(categories.length, 1);
@@ -72,7 +72,7 @@ void main() {
 
       ///Must throw exception because no tables have created
       expect(
-        () => catRepo.getUserCreatedCategories(),
+        () => catRepo.getCategories(),
         throwsA(isA<DatabaseException>()),
       );
       expect(
