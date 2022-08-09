@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:simple_money_tracker/app/features/summary/data/local_summary_repository.dart';
+import 'package:simple_money_tracker/app/features/summary/data/local_summary_batch_op_repository.dart';
 import 'package:simple_money_tracker/app/features/summary/data/sqlite_summary_repository.dart';
 import 'package:simple_money_tracker/app/features/summary/domain/summary_type.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SqliteSummaryBatchRepository with DatabaseWriteSummary {
+class SqliteSummaryBatchRepository with LocalSummaryBatchOpRepository {
   final Batch _batch;
 
   SqliteSummaryBatchRepository(this._batch);

@@ -1,19 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_money_tracker/app/features/summary/domain/summary_model.dart';
 
-mixin DatabaseReadSummmary {
+abstract class LocalSummaryRepository {
   Future<SummaryModel> getSummary();
-  Future<double> getBalance() async => (await getSummary()).balance;
+  Future<void> addIncome(double amount);
+  Future<void> deductIncome(double amount);
+  Future<void> deductExpenses(double amount);
+  Future<void> addExpenses(double amount);
 }
-mixin DatabaseWriteSummary {
-  void addIncome(double amount);
-  void deductIncome(double amount);
-  void deductExpenses(double amount);
-  void addExpenses(double amount);
-}
-
-abstract class LocalSummaryRepository
-    with DatabaseWriteSummary, DatabaseReadSummmary {}
 
 final localSummaryProvider = Provider<LocalSummaryRepository>((_) {
   throw UnimplementedError();

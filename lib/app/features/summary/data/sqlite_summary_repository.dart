@@ -56,6 +56,7 @@ INSERT INTO $kSummaryTableName(${SummaryType.totalIncome.value},${SummaryType.to
     return SummaryModel.fromMap(maps[0]);
   }
 
+  ///Expected sanitized values
   @visibleForTesting
   Future<void> updateBalance(
     double amount, {
