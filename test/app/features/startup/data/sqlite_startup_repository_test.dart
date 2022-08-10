@@ -8,9 +8,22 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../../category/data/sqlite_category_repository_test.dart';
 import '../../transaction/data/sqlite_transaction_repository_test.dart';
 
+Future<SqliteDatabaseRepository> getDbTestRepo() async {
+  final repo = SqliteDatabaseRepository(
+    inMemoryDatabasePath,
+    dbFactory: databaseFactoryFfi,
+    queriesOnDatabaseCreation: [],
+  );
+
+  ///There must be no errors
+  await repo.initialize();
+  return repo;
+}
+
 void main() {
   setUpAll(() => sqfliteFfiInit());
   late Database db;
+
   group('sqlte startup repo test', () {
     test('initializing', () async {
       final repo = SqliteDatabaseRepository(

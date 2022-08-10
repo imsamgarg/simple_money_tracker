@@ -7,7 +7,8 @@ import 'package:simple_money_tracker/app/features/transaction/data/sqlite_transa
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_model.dart';
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import '../../../../helpers/db_helper.dart';
 
 TransactionModel createTempTransactionModel([TransactionType? type]) {
   return TransactionModel(
@@ -23,6 +24,12 @@ TransactionModel createTempTransactionModel([TransactionType? type]) {
   );
 }
 
+Future<SqliteTransactionRepository> getTxnTestRepo(Database db) async {
+  final repo = SqliteTransactionRepository(db);
+  await db.execute(SqliteTransactionRepository.kTableCreateQuery);
+  return repo;
+}
+
 void main() {
   const table = SqliteTransactionRepository.kTableName;
   Future<void> _cleanUp(Database db) async => db.delete(table);
@@ -31,11 +38,8 @@ void main() {
   late final SqliteTransactionRepository repo;
 
   setUpAll(() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-    db = await openDatabase(inMemoryDatabasePath);
-    repo = SqliteTransactionRepository(db);
-    await db.execute(SqliteTransactionRepository.kTableCreateQuery);
+    db = await initSqliteInMemoryDb();
+    repo = await getTxnTestRepo(db);
   });
 
   group('sqlite transaction repo test group ', () {
