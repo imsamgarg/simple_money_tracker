@@ -24,17 +24,17 @@ INSERT INTO $kSummaryTableName(${SummaryType.totalIncome.value},${SummaryType.to
 
   @override
   Future<void> addIncome(double amount) {
-    return updateBalance(amount, type: SummaryType.totalIncome, op: Op.add);
+    return _updateBalance(amount, type: SummaryType.totalIncome, op: Op.add);
   }
 
   @override
   Future<void> addExpenses(double amount) {
-    return updateBalance(amount, type: SummaryType.totalExpenes, op: Op.add);
+    return _updateBalance(amount, type: SummaryType.totalExpenes, op: Op.add);
   }
 
   @override
   Future<void> deductIncome(double amount) {
-    return updateBalance(
+    return _updateBalance(
       amount,
       type: SummaryType.totalIncome,
       op: Op.subtract,
@@ -43,7 +43,7 @@ INSERT INTO $kSummaryTableName(${SummaryType.totalIncome.value},${SummaryType.to
 
   @override
   Future<void> deductExpenses(double amount) {
-    return updateBalance(
+    return _updateBalance(
       amount,
       type: SummaryType.totalExpenes,
       op: Op.subtract,
@@ -57,8 +57,7 @@ INSERT INTO $kSummaryTableName(${SummaryType.totalIncome.value},${SummaryType.to
   }
 
   ///Expected sanitized values
-  @visibleForTesting
-  Future<void> updateBalance(
+  Future<void> _updateBalance(
     double amount, {
     required SummaryType type,
     required Op op,
@@ -67,6 +66,14 @@ INSERT INTO $kSummaryTableName(${SummaryType.totalIncome.value},${SummaryType.to
     return _db.rawUpdate(
       "UPDATE $kSummaryTableName SET ${type.value} = ${type.value} $sign ?",
       [amount],
+    );
+  }
+
+  @visibleForTesting
+  Future<void> updateBalance(SummaryModel model) {
+    return _db.rawUpdate(
+      "UPDATE $kSummaryTableName SET ${SummaryType.totalExpenes.value} = ? , ${SummaryType.totalIncome.value} = ?",
+      [model.totalExpenses, model.totalIncome],
     );
   }
 }
