@@ -1,48 +1,65 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:simple_money_tracker/app/core/utils/unique_id_generator.dart';
-import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
+import 'package:simple_money_tracker/app/features/startup/data/sqlite_database_repository.dart';
+import 'package:simple_money_tracker/app/features/summary/data/sqlite_summary_batch_op_repository.dart';
 import 'package:simple_money_tracker/app/features/transaction/data/local_transaction_repository.dart';
+import 'package:simple_money_tracker/app/features/transaction/data/sqlite_transaction_batch_op_repository.dart';
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_model.dart';
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 
 class TransactionService {
-  final LocalTransactionRepository localRepo;
+  final LocalTransactionRepository txnRepo;
+  final SqliteDatabaseRepository dbRepo;
 
-  TransactionService({required this.localRepo});
+  TransactionService({required this.dbRepo, required this.txnRepo});
 
   /// Add Transations
-  Future<void> addTransaction({
-    required double amount,
-    required TransactionType transactionType,
-    required CategoryModel category,
-  }) {
-    final time = DateTime.now();
-    final id = getUniqueId();
-    final txnModel = TransactionModel(
-      transactionType: transactionType,
-      amount: amount,
-      time: time,
-      id: id,
-      category: category,
-    );
-    return localRepo.addTransaction(txnModel);
+  Future<void> addTransaction(TransactionModel txnModel) {
+    final batch = dbRepo.batch();
+    final transactionBatchRepo = SqliteTransactionBatchOpRepository(batch);
+    final summartBatchRepo = SqliteSummaryBatchRepository(batch);
+
+    transactionBatchRepo.addTransaction(txnModel);
+    final amount = txnModel.amount;
+    if (txnModel.transactionType == TransactionType.expense) {
+      summartBatchRepo.addExpenses(amount);
+    } else {
+      summartBatchRepo.addIncome(amount);
+    }
+
+    return batch.commit();
   }
 
   /// Delete Transations
-  Future<void> deleteTransaction(String id) => localRepo.deleteTransaction(id);
+  Future<void> deleteTransaction(TransactionModel txnModel) {
+    final batch = dbRepo.batch();
+    final transactionBatchRepo = SqliteTransactionBatchOpRepository(batch);
+    final summartBatchRepo = SqliteSummaryBatchRepository(batch);
+
+    transactionBatchRepo.deleteTransaction(txnModel.id);
+
+    if (txnModel.transactionType == TransactionType.expense) {
+      summartBatchRepo.deductExpenses(txnModel.amount);
+    } else {
+      summartBatchRepo.deductIncome(txnModel.amount);
+    }
+
+    return batch.commit();
+  }
 
   /// Get All Transations
   Future<List<TransactionModel>> getAllTransactions() =>
-      localRepo.getAllTransactions();
+      txnRepo.getAllTransactions();
 
   /// Get All Expense
-  Future<List<TransactionModel>> getAllExpenses() => localRepo.getAllExpenses();
+  Future<List<TransactionModel>> getAllExpenses() => txnRepo.getAllExpenses();
 
   /// Get All Incomes
-  Future<List<TransactionModel>> getAllIncomes() => localRepo.getAllIncomes();
+  Future<List<TransactionModel>> getAllIncomes() => txnRepo.getAllIncomes();
 }
 
 final transactionServiceProvider = Provider<TransactionService>((ref) {
   final localRepo = ref.read(localTransactionProvider);
-  return TransactionService(localRepo: localRepo);
+  final dbRepo = ref.read(sqliteDatabaseProvider);
+
+  return TransactionService(txnRepo: localRepo, dbRepo: dbRepo);
 });
