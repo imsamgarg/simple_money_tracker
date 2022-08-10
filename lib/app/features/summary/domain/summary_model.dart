@@ -3,37 +3,37 @@ class SummaryModel {
   final double totalIncome;
   final double totalExpenses;
   SummaryModel({
-    required this.totalIncome,
-    required this.totalExpenses,
+    this.totalIncome = 0,
+    this.totalExpenses = 0,
   });
 
   SummaryModel copyWith({
-    double? income,
-    double? expenses,
+    double? totalIncome,
+    double? totalExpenses,
   }) {
     return SummaryModel(
-      totalIncome: income ?? totalIncome,
-      totalExpenses: expenses ?? totalExpenses,
+      totalIncome: totalIncome ?? this.totalIncome,
+      totalExpenses: totalExpenses ?? this.totalExpenses,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'income': totalIncome,
-      'expenses': totalExpenses,
+      'totalIncome': totalIncome,
+      'totalExpenses': totalExpenses,
     };
   }
 
   factory SummaryModel.fromMap(Map<String, dynamic> map) {
     return SummaryModel(
-      totalIncome: map['income'] as double,
-      totalExpenses: map['expenses'] as double,
+      totalIncome: map['totalIncome'] as double,
+      totalExpenses: map['totalExpenses'] as double,
     );
   }
 
   @override
   String toString() =>
-      'BalanceModel(income: $totalIncome, expenses: $totalExpenses)';
+      'SummaryModel(totalIncome: $totalIncome, totalExpenses: $totalExpenses)';
 
   @override
   bool operator ==(covariant SummaryModel other) {
