@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
+import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 
 abstract class LocalCategoryRepository {
   ///Delete Category
@@ -10,6 +11,10 @@ abstract class LocalCategoryRepository {
 
   ///Get all the user created categories
   Future<List<CategoryModel>> getCategories();
+
+  ///Might not be needed
+  ///Get categories by type
+  Future<List<CategoryModel>> getCategoriesByType(TransactionType type);
 }
 
 final localCategoryProvider = Provider<LocalCategoryRepository>((_) {

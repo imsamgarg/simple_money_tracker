@@ -1,5 +1,6 @@
 import 'package:simple_money_tracker/app/features/category/data/local_category_repository.dart';
 import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
+import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SqliteCategoryRepository implements LocalCategoryRepository {
@@ -48,11 +49,11 @@ INSERT INTO $kCategoryTableName(id,categoryName,imagePath,type)
         ..write("(")
         ..write(model.id)
         ..write(",")
-        ..write(model.categoryName)
+        ..write('"${model.categoryName}"')
         ..write(",")
         ..write(model.imagePath)
         ..write(",")
-        ..write(model.type.value)
+        ..write('"${model.type.value}"')
         ..write(")");
 
       if (i != categoryModels.length - 1) buffer.writeln(",");
@@ -74,6 +75,17 @@ INSERT INTO $kCategoryTableName(id,categoryName,imagePath,type)
   @override
   Future<List<CategoryModel>> getCategories() async {
     final maps = await _db.query(kCategoryTableName);
-    return maps.map((e) => CategoryModel.fromMap(e)).toList();
+    return maps.map(CategoryModel.fromMap).toList();
+  }
+
+  @override
+  Future<List<CategoryModel>> getCategoriesByType(TransactionType type) async {
+    final maps = await _db.query(
+      kCategoryTableName,
+      where: "type = ?",
+      whereArgs: [type.value],
+    );
+
+    return maps.map(CategoryModel.fromMap).toList();
   }
 }
