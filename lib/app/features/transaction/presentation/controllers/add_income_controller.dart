@@ -11,7 +11,7 @@ class AddIncomeController extends StateNotifier<AsyncValue<void>> {
 
   AddIncomeController(this.service) : super(const AsyncData(null));
 
-  Future<void> addExpense({
+  Future<void> addIncome({
     required double amount,
     required CategoryModel category,
   }) async {
