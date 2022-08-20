@@ -4,8 +4,10 @@ import 'package:simple_money_tracker/app/features/category/domain/category_model
 import 'package:simple_money_tracker/app/features/transaction/application/transaction_service.dart';
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_model.dart';
 import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
+import 'package:simple_money_tracker/app/features/transaction/presentation/controllers/transaction_validators.dart';
 
-class AddIncomeController extends StateNotifier<AsyncValue<void>> {
+class AddIncomeController extends StateNotifier<AsyncValue<void>>
+    with TransactionValidator {
   final TransactionService _service;
 
   AddIncomeController(this._service) : super(const AsyncData(null));
