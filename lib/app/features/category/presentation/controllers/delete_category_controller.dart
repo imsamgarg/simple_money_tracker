@@ -20,7 +20,8 @@ class DeleteCategoryController extends StateNotifier<AsyncValue<void>> {
 final deleteCategoryController = StateNotifierProvider.autoDispose
     .family<DeleteCategoryController, AsyncValue<void>, CategoryModel>(
         (ref, model) {
-  final categoryService = ref.watch(categoryServiceProvider.notifier);
+  final categoryService =
+      ref.watch(categoryServiceProvider(model.type).notifier);
   return DeleteCategoryController(
     categoryService,
     categoryModel: model,
