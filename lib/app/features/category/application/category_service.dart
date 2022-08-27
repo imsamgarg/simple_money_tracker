@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -9,8 +10,12 @@ import 'package:simple_money_tracker/app/features/transaction/domain/transaction
 ///TODO need to work on this logic
 class CategoryService extends StateNotifier<AsyncValue<List<CategoryModel>>> {
   final LocalCategoryRepository categoryRepository;
+  final TransactionType type;
 
-  CategoryService(this.categoryRepository) : super(const AsyncLoading()) {
+  CategoryService({
+    required this.categoryRepository,
+    required this.type,
+  }) : super(const AsyncLoading()) {
     //fetch categories on initialization
     getCategories();
   }
@@ -18,7 +23,10 @@ class CategoryService extends StateNotifier<AsyncValue<List<CategoryModel>>> {
   @visibleForTesting
   Future<void> getCategories() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => categoryRepository.getCategories());
+    await Future.delayed(const Duration(seconds: 5));
+    state = await AsyncValue.guard(
+      () => categoryRepository.getCategoriesByType(type),
+    );
   }
 
   Future<void> addCategory({
@@ -47,9 +55,8 @@ class CategoryService extends StateNotifier<AsyncValue<List<CategoryModel>>> {
   }
 }
 
-final categoryServiceProvider =
-    StateNotifierProvider<CategoryService, AsyncValue<List<CategoryModel>>>(
-        (ref) {
+final categoryServiceProvider = StateNotifierProvider.family<CategoryService,
+    AsyncValue<List<CategoryModel>>, TransactionType>((ref, type) {
   final categoryRepository = ref.watch(localCategoryProvider);
-  return CategoryService(categoryRepository);
+  return CategoryService(type: type, categoryRepository: categoryRepository);
 });
