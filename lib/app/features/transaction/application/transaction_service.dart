@@ -12,12 +12,20 @@ class TransactionService {
   final LocalTransactionRepository txnRepo;
   final SqliteDatabaseRepository dbRepo;
 
+  List<TransactionModel>? _expenses;
+  List<TransactionModel>? _incomes;
+
   final StreamController<List<TransactionModel>> _expensesStreamController;
   final StreamController<List<TransactionModel>> _incomeStreamController;
 
   TransactionService({required this.dbRepo, required this.txnRepo})
       : _expensesStreamController = StreamController.broadcast(),
         _incomeStreamController = StreamController.broadcast();
+
+  Future<void> init() async {
+    _expensesStreamController.stream.listen((event) => _expenses = event);
+    _incomeStreamController.stream.listen((event) => _incomes = event);
+  }
 
   Stream<List<TransactionModel>> get watchExpenses =>
       _expensesStreamController.stream;
@@ -42,19 +50,27 @@ class TransactionService {
 
     await batch.commit();
 
+    late final List<TransactionModel> txns;
     if (isExpense) {
       if (!_expensesStreamController.hasListener) return;
 
-      return _expensesStreamController.add(
-        (await watchExpenses.last).toList()..add(txnModel),
-      );
+      if (_expenses == null) {
+        txns = await watchExpenses.first;
+      } else {
+        txns = _expenses!;
+      }
+
+      return _expensesStreamController.add(txns.toList()..add(txnModel));
     }
 
     if (!_incomeStreamController.hasListener) return;
 
-    return _incomeStreamController.add(
-      (await watchIncomes.last).toList()..add(txnModel),
-    );
+    if (_incomes == null) {
+      txns = await watchIncomes.first;
+    } else {
+      txns = _incomes!;
+    }
+    return _incomeStreamController.add(txns.toList()..add(txnModel));
   }
 
   /// Delete Transations
@@ -98,7 +114,7 @@ final incomeTransactionsProvider =
   service
       .getAllIncomes()
       .then((txns) => service._incomeStreamController.add(txns));
-  return service.watchIncomes;
+  return service.watchIncomes..listen((event) => service._incomes = event);
 });
 
 final expenseTransactionsProvider =
@@ -107,5 +123,5 @@ final expenseTransactionsProvider =
   service
       .getAllExpenses()
       .then((txns) => service._expensesStreamController.add(txns));
-  return service.watchExpenses;
+  return service.watchExpenses..listen((event) => service._expenses = event);
 });
