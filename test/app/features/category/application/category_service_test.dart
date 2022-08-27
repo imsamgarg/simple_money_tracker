@@ -12,6 +12,8 @@ class Listener extends Mock {
   void call(a, b);
 }
 
+const expense = TransactionType.expense;
+
 void main() {
   late final ProviderContainer container;
   late final Database db;
@@ -23,10 +25,13 @@ void main() {
     final repo = SqliteCategoryRepository(db);
     await db.execute(SqliteCategoryRepository.kTableCreateQuery);
 
-    final service = CategoryService(repo);
+    final service = CategoryService(
+      categoryRepository: repo,
+      type: expense,
+    );
     container = ProviderContainer(
       overrides: [
-        categoryServiceProvider.overrideWithValue(service),
+        categoryServiceProvider(expense).overrideWithValue(service),
       ],
     );
     addTearDown(container.dispose);
@@ -34,11 +39,12 @@ void main() {
 
   test('category service', () async {
     final listener = Listener();
-    final categoryService = container.read(categoryServiceProvider.notifier);
+    final provider = categoryServiceProvider(expense);
+    final categoryService = container.read(provider.notifier);
     List<CategoryModel> categories = [];
 
     container.listen<AsyncValue<List<CategoryModel>>>(
-      categoryServiceProvider,
+      provider,
       (p, n) {
         listener(p, n);
         if (n.value != null) categories = n.value!;
@@ -46,7 +52,7 @@ void main() {
       fireImmediately: true,
     );
 
-    await container.read(categoryServiceProvider.future);
+    await container.read(provider.future);
 
     expect(categories, []);
     const asyncLoading = TypeMatcher<AsyncLoading>();
