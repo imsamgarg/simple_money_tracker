@@ -5,6 +5,7 @@ import 'package:simple_money_tracker/app/core/widgets/date_picker_form_field.dar
 import 'package:simple_money_tracker/app/core/widgets/primary_button.dart';
 import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
 import 'package:simple_money_tracker/app/features/category/presentation/widgets/categories_drop_down.dart';
+import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 import 'package:simple_money_tracker/app/features/transaction/presentation/controllers/add_expense_controller.dart';
 import 'package:simple_money_tracker/app/features/transaction/presentation/widgets/des_text_field.dart';
 import 'package:simple_money_tracker/app/features/transaction/presentation/widgets/money_text_field.dart';
@@ -79,6 +80,7 @@ class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
           CategoriesDropdownButtonFormField(
             validator: controller.categoryValidator,
             onChanged: (category) => this.category = category,
+            transactionType: TransactionType.expense,
           ),
           _defaultSpacing,
           NotesTextField(

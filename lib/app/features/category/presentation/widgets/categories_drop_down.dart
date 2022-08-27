@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:custom_utils/spacing_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,19 +7,21 @@ import 'package:simple_money_tracker/app/core/styles/default_input_border.dart';
 import 'package:simple_money_tracker/app/core/widgets/input_prefix_icon.dart';
 import 'package:simple_money_tracker/app/features/category/application/category_service.dart';
 import 'package:simple_money_tracker/app/features/category/domain/category_model.dart';
+import 'package:simple_money_tracker/app/features/transaction/domain/transaction_type_enum.dart';
 
 class CategoriesDropdownButtonFormField extends ConsumerWidget {
   const CategoriesDropdownButtonFormField({
-    this.validator,
     required this.onChanged,
-    super.key,
+    required this.transactionType,
+    this.validator,
   });
 
   final ValueChanged<CategoryModel?> onChanged;
+  final TransactionType transactionType;
   final FormFieldValidator<CategoryModel>? validator;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categories = ref.watch(categoryServiceProvider);
+    final categories = ref.watch(categoryServiceProvider(transactionType));
 
     return Container(
       height: 55,
@@ -29,6 +32,7 @@ class CategoriesDropdownButtonFormField extends ConsumerWidget {
       ),
       child: categories.map(
         data: (data) {
+          final categories = data.value;
           return ClipRRect(
             borderRadius: kTextFieldDefaultBorderRadius,
             child: Material(
@@ -37,7 +41,7 @@ class CategoriesDropdownButtonFormField extends ConsumerWidget {
                 elevation: 1,
                 validator: validator,
                 hint: const Text("Select Category"),
-                selectedItemBuilder: (_) => _selectedItemBuilder(data.value),
+                selectedItemBuilder: (_) => _selectedItemBuilder(categories),
                 focusColor: Colors.transparent,
                 itemHeight: 65,
                 borderRadius: kTextFieldDefaultBorderRadius,
@@ -45,7 +49,7 @@ class CategoriesDropdownButtonFormField extends ConsumerWidget {
                   prefixIcon: InputPrefixIcon(Icons.category_rounded),
                   border: DefaultInputBorder(),
                 ),
-                items: data.value.map(_buildDropdownMenuItem).toList(),
+                items: categories.map(_buildDropdownMenuItem).toList(),
                 onChanged: onChanged,
               ),
             ),
