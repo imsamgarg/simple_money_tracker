@@ -10,6 +10,15 @@ mixin TransactionValidator {
   }
 
   String? amountValidator(String? v) {
+    final String? value = v;
+
+    if (value == null) return "Please Enter Amount";
+
+    final double? amount = double.tryParse(value);
+
+    if (amount == null) return "Please enter valid amount";
+    if (amount == 0) return "Amount must be greater than 0";
+
     return null;
   }
 
