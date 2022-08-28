@@ -27,7 +27,9 @@ class ResponsiveWidget extends StatelessWidget {
         final sizeType = SizeType.fromWidth(width);
         switch (sizeType) {
           case SizeType.extraSmall:
-            return onExtraSmall?.call(context) ?? builder(context);
+            return onExtraSmall?.call(context) ??
+                onSmall?.call(context) ??
+                builder(context);
           case SizeType.small:
             return onSmall?.call(context) ?? builder(context);
           case SizeType.medium:
@@ -35,7 +37,9 @@ class ResponsiveWidget extends StatelessWidget {
           case SizeType.large:
             return onLarge?.call(context) ?? builder(context);
           case SizeType.extraLarge:
-            return onLarge?.call(context) ?? builder(context);
+            return onExtraLarge?.call(context) ??
+                onLarge?.call(context) ??
+                builder(context);
         }
       },
     );
