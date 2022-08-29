@@ -32,4 +32,14 @@ final builtInCategories = <CategoryModel>[
     categoryName: "Gift",
     type: TransactionType.income,
   ),
+  const CategoryModel(
+    id: 7,
+    categoryName: "Others",
+    type: TransactionType.income,
+  ),
+  const CategoryModel(
+    id: 8,
+    categoryName: "Others",
+    type: TransactionType.expense,
+  ),
 ];
