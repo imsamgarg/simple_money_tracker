@@ -1,38 +1,19 @@
-import 'package:custom_utils/padding.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_money_tracker/app/core/theme/app_theme.dart';
-import 'package:simple_money_tracker/app/features/home/presentation/views/home_view.dart';
-import 'package:simple_money_tracker/app/features/transaction/presentation/views/add_expense_view.dart';
-import 'package:simple_money_tracker/app/features/transaction/presentation/views/add_income_view.dart';
+import 'package:simple_money_tracker/app/routes/app_router.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
+    return MaterialApp.router(
       theme: lightTheme,
-      home: Row(
-        children: const [
-          Expanded(child: Scaffold(body: HomeView())),
-          Expanded(
-            child: Scaffold(
-              body: Padding32(
-                child: AddIncomeView(),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ScaffoldMessenger(
-              child: Scaffold(
-                body: Padding32(
-                  child: AddExpenseView(),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+      routeInformationProvider: router.routeInformationProvider,
     );
   }
 }
