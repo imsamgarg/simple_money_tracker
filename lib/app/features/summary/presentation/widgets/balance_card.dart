@@ -65,7 +65,6 @@ class _BalanceCard extends StatelessWidget {
     return DefaultTextStyle(
       style: const TextStyle(color: Colors.white),
       child: Container(
-        margin: p16,
         padding: padding,
         decoration: BoxDecoration(
           color: theme.primaryColor,
