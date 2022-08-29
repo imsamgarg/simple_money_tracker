@@ -1,3 +1,4 @@
+import 'package:custom_utils/custom_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_money_tracker/app/features/transaction/presentation/views/add_expense_view.dart';
 
@@ -7,7 +8,9 @@ class AddExpensePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: AddExpenseView(),
+      body: Padding16(
+        child: AddExpenseView(),
+      ),
     );
   }
 }
