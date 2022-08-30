@@ -23,7 +23,6 @@ class CategoryService extends StateNotifier<AsyncValue<List<CategoryModel>>> {
   @visibleForTesting
   Future<void> getCategories() async {
     state = const AsyncLoading();
-    await Future.delayed(const Duration(seconds: 5));
     state = await AsyncValue.guard(
       () => categoryRepository.getCategoriesByType(type),
     );
