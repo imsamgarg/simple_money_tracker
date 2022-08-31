@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:simple_money_tracker/app/core/constants/built_in_categories.dart';
 import 'package:simple_money_tracker/app/features/category/data/sqlite_category_repository.dart';
 import 'package:simple_money_tracker/app/features/startup/data/sqlite_database_repository.dart';
+import 'package:simple_money_tracker/app/features/summary/data/sqlite_summary_repository.dart';
 import 'package:simple_money_tracker/app/features/transaction/data/sqlite_transaction_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -43,18 +45,26 @@ void main() {
         queriesOnDatabaseCreation: [
           SqliteCategoryRepository.kTableCreateQuery,
           SqliteTransactionRepository.kTableCreateQuery,
+          SqliteSummaryRepository.kTableCreateQuery,
+
+          //For creating built in categories to database
+          SqliteCategoryRepository.createMultipleInsertQuery(builtInCategories),
+          //For creating 1 row of summary
+          SqliteSummaryRepository.kSummaryInsertQuery,
         ],
       );
 
       db = await repo.initialize();
       final catRepo = SqliteCategoryRepository(db);
       final transactionRepo = SqliteTransactionRepository(db);
+      final summaryRepo = SqliteSummaryRepository(db);
 
+      await summaryRepo.getSummary();
       var categories = await catRepo.getCategories();
       var transactions = await transactionRepo.getAllTransactions();
 
       ///Because table is empty
-      expect(categories.isEmpty, true);
+      expect(categories.isEmpty, false);
       expect(transactions.isEmpty, true);
 
       ///Try Adding some values
@@ -66,10 +76,10 @@ void main() {
       categories = await catRepo.getCategories();
       transactions = await transactionRepo.getAllTransactions();
 
-      expect(categories.length, 1);
+      expect(categories.length, 9);
       expect(transactions.length, 1);
 
-      expect(categories[0], categoryModel);
+      expect(categories.last, categoryModel);
       expect(transactions[0], transactionModel);
     });
     test('without create table queries', () async {
