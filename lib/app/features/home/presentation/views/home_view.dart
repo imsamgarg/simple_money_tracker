@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simple_money_tracker/app/features/summary/presentation/widgets/balance_card.dart';
-import 'package:simple_money_tracker/app/features/transaction/presentation/views/all_expense_transactions.dart';
+import 'package:simple_money_tracker/app/features/transaction/presentation/views/all_expense_transactions_view.dart';
 import 'package:simple_money_tracker/app/routes/app_routes.dart';
 
 class HomeView extends ConsumerWidget {
@@ -32,7 +32,7 @@ class HomeView extends ConsumerWidget {
             ],
           ),
           verSpacing12,
-          const Expanded(child: AllExpenseTransactions()),
+          const Expanded(child: AllExpenseTransactionsView()),
         ],
       ),
     );
