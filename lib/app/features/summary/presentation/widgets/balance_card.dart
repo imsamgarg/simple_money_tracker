@@ -2,6 +2,7 @@ import 'package:custom_utils/custom_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_money_tracker/app/core/constants/sizes.dart';
+import 'package:simple_money_tracker/app/core/utils/size_type.dart';
 import 'package:simple_money_tracker/app/core/widgets/responsive_widget.dart';
 import 'package:simple_money_tracker/app/features/summary/application/summary_service.dart';
 
@@ -71,7 +72,16 @@ class _BalanceCard extends StatelessWidget {
           borderRadius: const BorderRadius.all(kDefaultRadius),
         ),
         child: ResponsiveWidget(
-          builder: (context) {
+          builder: (context, sizeType) {
+            if (sizeType == SizeType.extraSmall) {
+              return _SmallScreenContent(
+                title: title,
+                balance: balance,
+                incomeSection: incomeSection,
+                expenseSection: expenseSection,
+              );
+            }
+
             return Column(
               children: [
                 title,
@@ -83,21 +93,6 @@ class _BalanceCard extends StatelessWidget {
                   children: [incomeSection, expenseSection],
                 ),
               ],
-            );
-          },
-          onExtraSmall: (context) {
-            return Center(
-              child: Column(
-                children: [
-                  title,
-                  verSpacing8,
-                  balance,
-                  verSpacing16,
-                  incomeSection,
-                  verSpacing16,
-                  expenseSection
-                ],
-              ),
             );
           },
         ),
@@ -143,9 +138,39 @@ class _BalanceCard extends StatelessWidget {
   }
 }
 
+class _SmallScreenContent extends StatelessWidget {
+  const _SmallScreenContent({
+    required this.title,
+    required this.balance,
+    required this.incomeSection,
+    required this.expenseSection,
+  });
+
+  final Text title;
+  final Text balance;
+  final _Subsection incomeSection;
+  final _Subsection expenseSection;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          title,
+          verSpacing8,
+          balance,
+          verSpacing16,
+          incomeSection,
+          verSpacing16,
+          expenseSection
+        ],
+      ),
+    );
+  }
+}
+
 class _Subsection extends StatelessWidget {
   const _Subsection({
-    super.key,
     required this.title,
     required this.icon,
     required this.amount,

@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenResponsiveWidget(
-      builder: (context) {
+      builder: (context, screenType) {
         return SafeArea(
           child: Scaffold(
             body: const HomeView(),
