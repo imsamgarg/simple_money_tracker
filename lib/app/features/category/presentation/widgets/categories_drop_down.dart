@@ -19,6 +19,7 @@ class CategoriesDropdownButtonFormField extends ConsumerWidget {
   final ValueChanged<CategoryModel?> onChanged;
   final TransactionType transactionType;
   final FormFieldValidator<CategoryModel>? validator;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(categoryServiceProvider(transactionType));
@@ -41,6 +42,7 @@ class CategoriesDropdownButtonFormField extends ConsumerWidget {
                 elevation: 1,
                 validator: validator,
                 hint: const Text("Select Category"),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 selectedItemBuilder: (_) => _selectedItemBuilder(categories),
                 focusColor: Colors.transparent,
                 itemHeight: 65,
