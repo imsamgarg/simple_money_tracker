@@ -27,67 +27,102 @@ class _AddTransactionFABState extends State<AddTransactionFAB>
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final elevation = Theme.of(context).floatingActionButtonTheme.elevation;
-    return Flow(
-      delegate: _AddTransactionFlowDelegate(controller),
+    return Stack(
       children: [
-        SizedBox.square(
-          dimension: buttonSize,
-          child: FadeTransition(
-            opacity: animation,
-            child: FloatingActionButton(
-              elevation: elevation,
-              onPressed: () {
-                GoRouter.of(context).goNamed(AppRoutes.addExpense.name);
-              },
-              backgroundColor: Colors.white,
-              child: const Icon(
-                Icons.arrow_downward_rounded,
-                size: 28,
-                color: Colors.red,
-              ),
-            ),
-          ),
+        Flow(
+          clipBehavior: Clip.none,
+          delegate: _AddTransactionFlowDelegate(controller),
+          children: [
+            _AddExpenseFab(animation: animation),
+            _AddIncomeFab(animation: animation),
+          ],
         ),
-        SizedBox.square(
-          dimension: buttonSize,
-          child: FadeTransition(
-            opacity: animation,
+        Align(
+          alignment: Alignment.bottomRight,
+          child: SizedBox.square(
+            dimension: buttonSize,
             child: FloatingActionButton(
-              elevation: elevation,
-              backgroundColor: Colors.white,
-              onPressed: () {
-                GoRouter.of(context).goNamed(AppRoutes.addIncome.name);
-              },
-              child: const Icon(
-                Icons.arrow_upward_rounded,
-                color: Colors.green,
-                size: 28,
-              ),
-            ),
-          ),
-        ),
-        SizedBox.square(
-          dimension: buttonSize,
-          child: FloatingActionButton(
-            onPressed: () {
-              if (controller.status == AnimationStatus.completed) {
-                controller.reverse();
-                return;
-              }
-              controller.forward();
-            },
-            child: RotationTransition(
-              turns: Tween(begin: 0.0, end: 0.625).animate(animation),
-              child: const Icon(
-                Icons.add,
-                size: 28,
+              onPressed: _controlAnimation,
+              child: RotationTransition(
+                turns: Tween(begin: 0.0, end: 0.625).animate(animation),
+                child: const Icon(
+                  Icons.add,
+                  size: 28,
+                ),
               ),
             ),
           ),
         ),
       ],
+    );
+  }
+
+  void _controlAnimation() {
+    if (controller.status == AnimationStatus.completed) {
+      controller.reverse();
+      return;
+    }
+    controller.forward();
+  }
+}
+
+class _AddExpenseFab extends StatelessWidget {
+  const _AddExpenseFab({required this.animation});
+
+  final Animation<double> animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: buttonSize,
+      child: FadeTransition(
+        opacity: animation,
+        child: FloatingActionButton(
+          onPressed: () {
+            GoRouter.of(context).goNamed(AppRoutes.addExpense.name);
+          },
+          backgroundColor: Colors.white,
+          child: const Icon(
+            Icons.arrow_downward_rounded,
+            size: 28,
+            color: Colors.red,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AddIncomeFab extends StatelessWidget {
+  const _AddIncomeFab({required this.animation});
+
+  final Animation<double> animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: buttonSize,
+      child: FadeTransition(
+        opacity: animation,
+        child: FloatingActionButton(
+          backgroundColor: Colors.white,
+          onPressed: () {
+            GoRouter.of(context).goNamed(AppRoutes.addIncome.name);
+          },
+          child: const Icon(
+            Icons.arrow_upward_rounded,
+            color: Colors.green,
+            size: 28,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -100,40 +135,24 @@ class _AddTransactionFlowDelegate extends FlowDelegate {
   @override
   void paintChildren(FlowPaintingContext context) {
     final size = context.size;
-    const xPadding = 32;
-    const yPadding = 16;
+
     if (animation.isDismissed) {
-      return context.paintChild(
-        context.childCount - 1,
-        transform: Matrix4.translationValues(
-          size.width - buttonSize - xPadding,
-          size.height - yPadding - buttonSize,
-          0,
-        ),
-      );
+      return;
     }
-    for (int i = 0; i < context.childCount - 1; i++) {
+    for (int i = 0; i < context.childCount; i++) {
       const gap = 68;
       final offset = (i + 1) * gap * animation.value;
-      final y = size.height - buttonSize - yPadding - offset;
+      final y = size.height - buttonSize - offset;
+
       context.paintChild(
         i,
         transform: Matrix4.translationValues(
-          size.width - buttonSize - xPadding,
+          size.width - buttonSize,
           y,
           0,
         ),
       );
     }
-
-    context.paintChild(
-      context.childCount - 1,
-      transform: Matrix4.translationValues(
-        size.width - buttonSize - xPadding,
-        size.height - yPadding - buttonSize,
-        0,
-      ),
-    );
   }
 
   @override
