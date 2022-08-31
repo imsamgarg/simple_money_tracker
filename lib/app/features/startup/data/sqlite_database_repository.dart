@@ -33,9 +33,10 @@ class SqliteDatabaseRepository {
     );
   }
 
-  FutureOr<void> _onCreate(Database db, int version) {
-    final query = queriesOnDatabaseCreation.join(";");
-    return db.execute(query);
+  Future<void> _onCreate(Database db, int version) async {
+    for (final query in queriesOnDatabaseCreation) {
+      await db.execute(query);
+    }
   }
 
   Batch batch() => db.batch();
