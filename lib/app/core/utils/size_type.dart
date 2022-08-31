@@ -1,5 +1,5 @@
 enum SizeType {
-  extraSmall(150),
+  extraSmall(250),
   small(350),
   medium(550),
   large(750),
@@ -10,11 +10,12 @@ enum SizeType {
   const SizeType(this.size);
 
   factory SizeType.fromWidth(double width) {
-    if (width > SizeType.extraLarge.size) return SizeType.extraLarge;
-    if (width > SizeType.large.size) return SizeType.large;
-    if (width > SizeType.medium.size) return SizeType.medium;
-    if (width > SizeType.small.size) return SizeType.small;
+    if (width < SizeType.extraSmall.size) return SizeType.extraSmall;
+    if (width < SizeType.small.size) return SizeType.small;
+    if (width < SizeType.medium.size) return SizeType.medium;
+    if (width < SizeType.large.size) return SizeType.large;
+    // if (width < SizeType.extraLarge.size) return SizeType.extraLarge;
 
-    return SizeType.extraSmall;
+    return SizeType.extraLarge;
   }
 }
