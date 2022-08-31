@@ -21,7 +21,7 @@ CREATE TABLE $kTableName(
   amount REAL NOT NULL,
   transactionType TEXT NOT NULL,
   FOREIGN KEY (categoryId) REFERENCES ${SqliteCategoryRepository.kCategoryTableName}(id)
-);
+)
 ''';
 
   @override

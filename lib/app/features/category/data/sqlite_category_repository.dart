@@ -59,7 +59,7 @@ INSERT INTO $kCategoryTableName(id,categoryName,imagePath,type)
       if (i != categoryModels.length - 1) buffer.writeln(",");
     }
 
-    buffer.writeln(";");
+    buffer.writeln();
     return buffer.toString();
   }
 
