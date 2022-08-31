@@ -7,9 +7,11 @@ class AddExpensePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Padding16(
-        child: AddExpenseView(),
+    return const SafeArea(
+      child: Scaffold(
+        body: Padding16(
+          child: AddExpenseView(),
+        ),
       ),
     );
   }

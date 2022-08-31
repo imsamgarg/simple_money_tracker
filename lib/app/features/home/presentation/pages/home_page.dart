@@ -11,15 +11,17 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenResponsiveWidget(
       builder: (context) {
-        return Scaffold(
-          body: const HomeView(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              GoRouter.of(context).goNamed(AppRoutes.addExpense.name);
-            },
-            child: const Icon(Icons.add),
+        return SafeArea(
+          child: Scaffold(
+            body: const HomeView(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                GoRouter.of(context).goNamed(AppRoutes.addExpense.name);
+              },
+              child: const Icon(Icons.add),
+            ),
           ),
         );
       },
