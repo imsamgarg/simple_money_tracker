@@ -49,6 +49,7 @@ class _AddTransactionFABState extends State<AddTransactionFAB>
           child: SizedBox.square(
             dimension: buttonSize,
             child: FloatingActionButton(
+              heroTag: "add_transaction",
               onPressed: _controlAnimation,
               child: RotationTransition(
                 turns: Tween(begin: 0.0, end: 0.625).animate(animation),
@@ -85,6 +86,7 @@ class _AddExpenseFab extends StatelessWidget {
       child: FadeTransition(
         opacity: animation,
         child: FloatingActionButton(
+          heroTag: "add_expense",
           onPressed: () {
             GoRouter.of(context).goNamed(AppRoutes.addExpense.name);
           },
@@ -112,6 +114,7 @@ class _AddIncomeFab extends StatelessWidget {
       child: FadeTransition(
         opacity: animation,
         child: FloatingActionButton(
+          heroTag: "add_income",
           backgroundColor: Colors.white,
           onPressed: () {
             GoRouter.of(context).goNamed(AppRoutes.addIncome.name);
